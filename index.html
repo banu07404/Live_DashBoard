@@ -1,12 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Live Dashboard</title>
+  <meta charset="UTF-8">
+  <title>Live Financial Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f4f6f8; }
+    h1 { text-align: center; color: #2c3e50; }
+    iframe { 
+      display: block; 
+      margin: 20px auto; 
+      border: 1px solid #ccc; 
+      width: 95%; 
+      height: 600px; 
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    footer { text-align: center; margin-top: 20px; color: #888; }
+  </style>
 </head>
 <body>
-  <h1>Welcome to my Dashboard</h1>
-  <p>
-    <a href="dashboard_2.html">Go to Dashboard 2</a>
-  </p>
+  <h1>📊 Live Financial Dashboard</h1>
+
+  <!-- Embed your published Google Sheet -->
+  <iframe 
+    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRyaZUuLTaziWrIaf1-ZMAvJm7NYLTJg71JcSQ-zWDTqPsDvUhbUyT1OH4pE_gGuA/pubhtml?gid=124749958&single=true&headers=true"
+    frameborder="0"
+    allowfullscreen>
+  </iframe>
+
+  <footer>
+    Data updates automatically when the Google Sheet changes.
+  </footer>
 </body>
 </html>
