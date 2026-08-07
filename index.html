@@ -1,18 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Live Financial Dashboard</title>
+  <title>Financial Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f4f6f8; }
+    h1 { text-align: center; color: #2c3e50; }
+    table { width: 60%; margin: 20px auto; border-collapse: collapse; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    th, td { padding: 12px; border: 1px solid #ddd; text-align: center; }
+    th { background: #3498db; color: #fff; }
+    tr:nth-child(even) { background: #f9f9f9; }
+    #status { text-align: center; margin-top: 20px; font-weight: bold; color: #27ae60; }
+  </style>
 </head>
 <body>
-  <h1>📊 Live Financial Dashboard</h1>
+  <h1>📊 Financial Dashboard</h1>
+  <div id="status">Loading data from Google Sheets...</div>
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-  <!-- Embed published Google Sheet -->
-  <iframe 
-    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRyaZUuLTaziWrIaf1-ZMAvJm7NYLTJg71JcSQ-zWDTqPsDvUhbUyT1OH4pE_gGuA/pubhtml?gid=124749958&single=true&headers=true"
-    width="100%"
-    height="600"
-    frameborder="0">
-  </iframe>
+  <!-- Tabletop.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.4/tabletop.min.js"></script>
+  <script>
+    // Replace with your published sheet link
+    var publicSpreadsheetUrl = 'YOUR_PUBLISHED_SHEET_LINK_HERE';
+
+    function init() {
+      Tabletop.init({
+        key: publicSpreadsheetUrl,
+        callback: showInfo,
+        simpleSheet: true
+      });
+    }
+
+    function showInfo(data, tabletop) {
+      const tbody = document.querySelector("#dataTable tbody");
+      tbody.innerHTML = "";
+
+      data.forEach(row => {
+        let tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row["Item"] || ""}</td>
+          <td>${row["Value"] || ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("status").textContent = "✅ Data loaded successfully!";
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
 </body>
 </html>
