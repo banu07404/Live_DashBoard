@@ -1,76 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Financial Dashboard</title>
+  <title>Live Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; background: #f4f6f8; }
-    h1 { text-align: center; color: #2c3e50; }
-    table { width: 80%; margin: 20px auto; border-collapse: collapse; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    th, td { padding: 12px; border: 1px solid #ddd; text-align: center; }
-    th { background: #3498db; color: #fff; }
-    tr:nth-child(even) { background: #f9f9f9; }
-    #status { text-align: center; margin-top: 20px; font-weight: bold; color: #27ae60; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: #007acc;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
   </style>
 </head>
 <body>
-  <h1>📊 Financial Dashboard</h1>
-  <div id="status">Loading data from Google Sheets...</div>
-  <table id="dataTable">
-    <thead>
-      <tr id="headerRow"></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <h1>📊 Live Google Sheet Dashboard</h1>
+  <table id="data-table"></table>
 
-  <!-- Tabletop.js library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.4/tabletop.min.js"></script>
   <script>
-    // Use your published sheet link with headers=true
-    var publicSpreadsheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRyaZUuLTaziWrIaf1-ZMAvJm7NYLTJg71JcSQ-zWDTqPsDvUhbUyT1OH4pE_gGuA/pubhtml?gid=124749958&single=true&headers=true';
+    // Replace with your published CSV link
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRSafWeGHipxKseCSWdr-b2boejcaWjIhYpTbg5Pr8vmQgqiuR-RWYQN0gBp9-KfFlJeILvabznIJg4/pub?output=csv";
 
-    function init() {
-      Tabletop.init({
-        key: publicSpreadsheetUrl,
-        callback: showInfo,
-        simpleSheet: true
-      });
-    }
+    fetch(sheetUrl)
+      .then(response => response.text())
+      .then(data => {
+        const rows = data.split("\n").map(row => row.split(","));
+        const table = document.getElementById("data-table");
 
-    function showInfo(data, tabletop) {
-      const tbody = document.querySelector("#dataTable tbody");
-      const headerRow = document.querySelector("#headerRow");
-      tbody.innerHTML = "";
-      headerRow.innerHTML = "";
-
-      // Auto-generate headers from sheet
-      const keys = Object.keys(data[0]);
-      keys.forEach(key => {
-        let th = document.createElement("th");
-        th.textContent = key;
-        headerRow.appendChild(th);
-      });
-
-      // Populate rows dynamically
-      data.forEach(row => {
-        let tr = document.createElement("tr");
-        keys.forEach(key => {
-          let td = document.createElement("td");
-          if (row[key] && row[key].startsWith("http")) {
-            td.innerHTML = `<a href="${row[key]}" target="_blank">View File</a>`;
-          } else {
-            td.textContent = row[key] || "";
-          }
-          tr.appendChild(td);
+        // Build table header
+        let headerRow = document.createElement("tr");
+        rows[0].forEach(header => {
+          let th = document.createElement("th");
+          th.textContent = header;
+          headerRow.appendChild(th);
         });
-        tbody.appendChild(tr);
-      });
+        table.appendChild(headerRow);
 
-      document.getElementById("status").textContent = "✅ Data loaded successfully!";
-      console.log("Row keys:", keys); // Debugging
-    }
-
-    window.addEventListener('DOMContentLoaded', init);
-  </script>
-</body>
-</html>
+        // Build table rows
