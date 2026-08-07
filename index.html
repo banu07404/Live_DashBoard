@@ -6,7 +6,7 @@
   <style>
     body { font-family: Arial, sans-serif; margin: 40px; background: #f4f6f8; }
     h1 { text-align: center; color: #2c3e50; }
-    table { width: 60%; margin: 20px auto; border-collapse: collapse; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    table { width: 80%; margin: 20px auto; border-collapse: collapse; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
     th, td { padding: 12px; border: 1px solid #ddd; text-align: center; }
     th { background: #3498db; color: #fff; }
     tr:nth-child(even) { background: #f9f9f9; }
@@ -18,10 +18,7 @@
   <div id="status">Loading data from Google Sheets...</div>
   <table id="dataTable">
     <thead>
-      <tr>
-        <th>Item</th>
-        <th>Value</th>
-      </tr>
+      <tr id="headerRow"></tr>
     </thead>
     <tbody></tbody>
   </table>
@@ -29,9 +26,8 @@
   <!-- Tabletop.js library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.4/tabletop.min.js"></script>
   <script>
-    // Replace with your published sheet link
+    // Use your published sheet link with headers=true
     var publicSpreadsheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRyaZUuLTaziWrIaf1-ZMAvJm7NYLTJg71JcSQ-zWDTqPsDvUhbUyT1OH4pE_gGuA/pubhtml?gid=124749958&single=true&headers=true';
-
 
     function init() {
       Tabletop.init({
@@ -43,18 +39,35 @@
 
     function showInfo(data, tabletop) {
       const tbody = document.querySelector("#dataTable tbody");
+      const headerRow = document.querySelector("#headerRow");
       tbody.innerHTML = "";
+      headerRow.innerHTML = "";
 
+      // Auto-generate headers from sheet
+      const keys = Object.keys(data[0]);
+      keys.forEach(key => {
+        let th = document.createElement("th");
+        th.textContent = key;
+        headerRow.appendChild(th);
+      });
+
+      // Populate rows dynamically
       data.forEach(row => {
         let tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${row["Item"] || ""}</td>
-          <td>${row["Value"] || ""}</td>
-        `;
+        keys.forEach(key => {
+          let td = document.createElement("td");
+          if (row[key] && row[key].startsWith("http")) {
+            td.innerHTML = `<a href="${row[key]}" target="_blank">View File</a>`;
+          } else {
+            td.textContent = row[key] || "";
+          }
+          tr.appendChild(td);
+        });
         tbody.appendChild(tr);
       });
 
       document.getElementById("status").textContent = "✅ Data loaded successfully!";
+      console.log("Row keys:", keys); // Debugging
     }
 
     window.addEventListener('DOMContentLoaded', init);
